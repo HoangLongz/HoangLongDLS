@@ -21,75 +21,75 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-let allProducts = []; // Sẽ được lấy từ Firebase
-let allOrders = []; // THÊM DÒNG NÀY ĐỂ CHỨA ĐƠN HÀNG TỪ FIREBASE
+// MẢNG DỮ LIỆU GỐC (Dùng để đẩy lên Firebase lần đầu tiên nếu trên đó trống)
+const initialProducts = [
+    { name: "Nike Mercurial Vapor 16 Elite Xanh Coban", price: 790000, img: "xanhcobanelite.jpg" },
+    { name: "Nike Mercurial Vapor 16 Academy Cam Vạch Xanh Biển", price: 530000, img: "camvachxanhaca.jpg" },
+    { name: "Nike Tiempo 10 Pro Bạc Vạch Đen", price: 680000, img: "tiempo10bac.jpg" },
+    { name: "Nike Phantom GX 2 Elite Trắng Vạch Xanh Hồng", price: 750000, img: "phantomgx2.jpg" },
+    { name: "Adidas F50 Elite Lamine Yamal Hồng Nhạt", price: 700000, img: "f50yamal.jpg" },
+    { name: "Vapor 16 Elite VN Trắng Vạch Dior", price: 390000, img: "vndior.jpg" },
+    { name: "Adidas X 19.1 Hồng Neon", price: 560000, img: "x19.1.jpg" },
+    { name: "Mizuno Neo 4 Bạc", price: 450000, img: "mizunoneo4.jpg" },
+    { name: "Nike Mercurial Vapor 16 Academy V2 ViniJR Hồng", price: 430000, img: "viniacav2.jpg" },
+    { name: "Winbro F50 Pro Cam Xanh", price: 290000, img: "winbrof50cam.jpg" },
+    { name: "Vapor 16 Elite VN Đỏ Vạch Trắng Đen", price: 390000, img: "vndovp.jpg" },
+    { name: "Nike Mercurial Vapor 16 Elite Dior", price: 790000, img: "vp16dior.jpg" },
+    { name: "Nike Mercurial Vapor 16 Academy V2 Tím khoai môn", price: 430000, img: "acatimv2.jpg" },
+    { name: "Nike Mercurial Vic 6 Đỏ Vạch Đen", price: 430000, img: "vic6do.jpg" },
+    { name: "Nike Phantom 6 Pro Đỏ Xám", price: 660000, img: "phantom6do.jpg" },
+    { name: "Adidas F50 Elite BAPE Xanh Hồng", price: 850000, img: "bape.jpg" },
+    { name: "Adidas F50 Elite Trắng Vạch Đỏ Xanh", price: 720000, img: "f50trang.jpg" },
+    { name: "Adidas F50 Elite Laceless Trắng Đỏ", price: 680000, img: "f50leaguetrangdo.jpg" },
+    { name: "Mizuno Neo 4 Pro Đỏ Vạch Hồng", price: 740000, img: "mizunoneo4dovachhong.jpg" },
+    { name: "Nike Mercurial Vapor 14 Pro Euro Xanh Ngọc", price: 650000, img: "vapor14proxanheuro.jpg" },
+    { name: "Winbro Mercurial Vapor 16 Pro Xanh Lá", price: 290000, img: "winbrovp16xanh.jpg" },
+    { name: "Vapor 16 Elite VN Xanh Ngọc Đế Xanh Ngọc", price: 280000, img: "vp16vnxanhngoc.jpg" },
+    { name: "Nike Mercurial Vapor 15 Academy Trắng", price: 430000, img: "aca15trang.jpg" },
+    { name: "Adidas Predator Edge.3", price: 590000, img: "predator.jpg" },
+    { name: "Mizuno Morelia Neo 3", price: 420000, img: "mizuno3.jpg" },
+    { name: "Nike Mercurial Vapor 16 Elite Gray", price: 790000, img: "gray.jpg" }
+    // ... Bạn hãy copy nốt các đôi còn lại trong file cũ của bạn dán vào đây nhé ...
+];
 
-// Lắng nghe dữ liệu Real-time từ Firebase
+let allProducts = []; 
+let allOrders = []; 
+
+// --- LẮNG NGHE DỮ LIỆU SẢN PHẨM (REAL-TIME) ---
 db.collection("dls_data").doc("products").onSnapshot((doc) => {
     if (doc.exists) {
-        // Nếu đã có dữ liệu trên Firebase, lấy về gán vào allProducts
-        allProducts = doc.data().productList;
+        // Nếu đã có dữ liệu trên Firebase thì lấy về dùng
+        allProducts = doc.data().productList || [];
     } else {
-        // Nếu Firebase trống (lần chạy đầu tiên), dùng mảng mặc định và đẩy lên Firebase
-        allProducts = [
-            { name: "Nike Mercurial Vapor 16 Elite Xanh Coban", price: 790000, img: "xanhcobanelite.jpg" },
-            { name: "Nike Mercurial Vapor 16 Academy Cam Vạch Xanh Biển", price: 530000, img: "camvachxanhaca.jpg" },
-            { name: "Nike Tiempo 10 Pro Bạc Vạch Đen", price: 680000, img: "tiempo10bac.jpg" },
-            { name: "Nike Phantom GX 2 Elite Trắng Vạch Xanh Hồng", price: 750000, img: "phantomgx2.jpg" },
-            { name: "Adidas F50 Elite Lamine Yamal Hồng Nhạt", price: 700000, img: "f50yamal.jpg" },
-            { name: "Vapor 16 Elite VN Trắng Vạch Dior", price: 390000, img: "vndior.jpg" },
-            { name: "Adidas X 19.1 Hồng Neon", price: 560000, img: "x19.1.jpg" },
-            { name: "Mizuno Neo 4 Bạc", price: 450000, img: "mizunoneo4.jpg" },
-            { name: "Nike Mercurial Vapor 16 Academy V2 ViniJR Hồng", price: 430000, img: "viniacav2.jpg" },
-            { name: "Winbro F50 Pro Cam Xanh", price: 290000, img: "winbrof50cam.jpg" },
-            { name: "Vapor 16 Elite VN Đỏ Vạch Trắng Đen", price: 390000, img: "vndovp.jpg" },
-            { name: "Nike Mercurial Vapor 16 Elite Dior", price: 790000, img: "vp16dior.jpg" },
-            { name: "Nike Mercurial Vapor 16 Academy V2 Tím khoai môn", price: 430000, img: "acatimv2.jpg" },
-            { name: "Nike Mercurial Vic 6 Đỏ Vạch Đen", price: 430000, img: "vic6do.jpg" },
-            { name: "Nike Phantom 6 Pro Đỏ Xám", price: 660000, img: "phantom6do.jpg" },
-            { name: "Adidas F50 Elite BAPE Xanh Hồng", price: 850000, img: "bape.jpg" },
-            { name: "Adidas F50 Elite Trắng Vạch Đỏ Xanh", price: 720000, img: "f50trang.jpg" },
-            { name: "Adidas F50 Elite Laceless Trắng Đỏ", price: 680000, img: "f50leaguetrangdo.jpg" },
-            { name: "Mizuno Neo 4 Pro Đỏ Vạch Hồng", price: 740000, img: "mizunoneo4dovachhong.jpg" },
-            { name: "Nike Mercurial Vapor 14 Pro Euro Xanh Ngọc", price: 650000, img: "vapor14proxanheuro.jpg" },
-            { name: "Winbro Mercurial Vapor 16 Pro Xanh Lá", price: 290000, img: "winbrovp16xanh.jpg" },
-            { name: "Vapor 16 Elite VN Xanh Ngọc Đế Xanh Ngọc", price: 280000, img: "vp16vnxanhngoc.jpg" },
-            { name: "Nike Mercurial Vapor 15 Academy Trắng", price: 430000, img: "aca15trang.jpg" },
-            { name: "Adidas Predator Edge.3", price: 590000, img: "predator.jpg" },
-            { name: "Mizuno Morelia Neo 3", price: 420000, img: "mizuno3.jpg" },
-            { name: "Nike Mercurial Vapor 16 Elite Gray", price: 790000, img: "gray.jpg" }
-        ];
-        db.collection("dls_data").doc("products").set({ productList: allProducts });
+        // LẦN ĐẦU TIÊN: Nếu Firebase chưa có gì, lấy mảng initialProducts đẩy lên
+        console.log("Đang khởi tạo dữ liệu lên Firebase lần đầu...");
+        allProducts = initialProducts;
+        db.collection("dls_data").doc("products").set({ productList: initialProducts });
     }
     
-    // Tự động cập nhật lại giao diện khi có thay đổi dữ liệu
+    // Cập nhật giao diện ngay lập tức mà không cần F5
     filteredProducts = [...allProducts];
-    renderProducts(currentPage);
+    if (typeof renderProducts === "function") renderProducts(currentPage);
     
-    // Nếu bảng admin đang mở, cập nhật luôn bảng admin
-    if (document.getElementById('adminProductArea') && document.getElementById('adminProductArea').style.display === 'block') {
-        renderAdminProducts();
+    // Nếu đang ở trang Admin thì vẽ lại bảng Admin
+    const adminArea = document.getElementById('adminProductArea');
+    if (adminArea && adminArea.style.display === 'block') {
+        if (typeof renderAdminProducts === "function") renderAdminProducts();
     }
 });
 
-// THÊM MỚI ĐOẠN NÀY: Lắng nghe dữ liệu Đơn hàng Real-time từ Firebase
+// --- LẮNG NGHE DỮ LIỆU ĐƠN HÀNG (REAL-TIME) ---
 db.collection("dls_data").doc("orders").onSnapshot((doc) => {
     if (doc.exists) {
         allOrders = doc.data().orderList || [];
     } else {
-        // Nếu chưa có file lưu đơn hàng trên Firebase thì tạo mảng rỗng
         allOrders = [];
         db.collection("dls_data").doc("orders").set({ orderList: allOrders });
     }
 
-    // Tự động cập nhật bảng Admin nếu Admin đang mở tab Đơn hàng
+    // Cập nhật bảng đơn hàng Admin nếu đang mở
     if (document.getElementById('adminOrderArea') && document.getElementById('adminOrderArea').style.display === 'block') {
-        renderAdminOrders();
-    }
-
-    // Tự động cập nhật giao diện của Khách nếu Khách đang mở bảng Lịch sử mua hàng
-    if (document.getElementById('orderTrackingModal') && document.getElementById('orderTrackingModal').style.display === 'flex') {
-        showOrderTracking();
+        if (typeof renderAdminOrders === "function") renderAdminOrders();
     }
 });
 
@@ -495,8 +495,12 @@ function loginAction() {
     if(found) {
         localStorage.setItem('dls_session', JSON.stringify(found));
         checkLoginStatus();
+        // --- THÊM ĐÚNG 1 DÒNG NÀY ĐỂ HIỆN NÚT ADMIN KHÔNG CẦN F5 ---
+        checkAdminAccess();
         closeModal('authModal');
         alert("Chào mừng " + found.name + " đã quay trở lại!");
+        // THÊM DÒNG NÀY: Tự động tải lại trang để hiện nút Admin ngay lập tức mà không cần ấn F5
+        window.location.reload();
     } else {
         alert("Tên đăng nhập hoặc mật khẩu không chính xác!");
     }
@@ -802,17 +806,21 @@ function saveProduct() {
     const name = document.getElementById('editProductName').value;
     const price = parseInt(document.getElementById('editProductPrice').value);
     const img = document.getElementById('editProductImg').value;
+    
     if(!name || !price || !img) return alert("Vui lòng điền đủ!");
 
-    if(index === -1) allProducts.push({name, price, img});
-    else allProducts[index] = {name, price, img};
+    if(index === -1) {
+        allProducts.push({name, price, img});
+    } else {
+        allProducts[index] = {name, price, img};
+    }
 
-    // Đẩy mảng mới lên Firebase thay vì dùng localStorage
+    // ĐẨY LÊN FIREBASE. KHÔNG ĐƯỢC GỌI HÀM RENDER Ở ĐÂY NỮA
     db.collection("dls_data").doc("products").set({ productList: allProducts })
         .then(() => {
             alert("Thành công!");
             closeModal('editProductModal');
-            // Giao diện sẽ tự động được cập nhật nhờ onSnapshot ở trên
+            // Giao diện sẽ tự nhảy nhờ onSnapshot ở trên
         })
         .catch((error) => {
             alert("Lỗi khi lưu sản phẩm: " + error.message);
@@ -823,7 +831,7 @@ function deleteProduct(index) {
     if(confirm("Xóa sản phẩm này?")) {
         allProducts.splice(index, 1);
         
-        // Cập nhật lại mảng lên Firebase sau khi xóa
+        // ĐẨY LÊN FIREBASE. KHÔNG ĐƯỢC GỌI HÀM RENDER Ở ĐÂY NỮA
         db.collection("dls_data").doc("products").set({ productList: allProducts })
             .catch((error) => {
                 alert("Lỗi khi xóa sản phẩm: " + error.message);
