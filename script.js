@@ -55,26 +55,25 @@ const initialProducts = [
 let allProducts = []; 
 let allOrders = []; 
 
-// --- LẮNG NGHE DỮ LIỆU SẢN PHẨM (REAL-TIME) ---
+// LẮNG NGHE DỮ LIỆU SẢN PHẨM (Dành cho cả Khách và Admin)
 db.collection("dls_data").doc("products").onSnapshot((doc) => {
     if (doc.exists) {
-        // Nếu đã có dữ liệu trên Firebase thì lấy về dùng
         allProducts = doc.data().productList || [];
     } else {
-        // LẦN ĐẦU TIÊN: Nếu Firebase chưa có gì, lấy mảng initialProducts đẩy lên
-        console.log("Đang khởi tạo dữ liệu lên Firebase lần đầu...");
-        allProducts = initialProducts;
+        allProducts = initialProducts; // Nếu Firebase trống thì lấy mảng gốc
         db.collection("dls_data").doc("products").set({ productList: initialProducts });
     }
     
-    // Cập nhật giao diện ngay lập tức mà không cần F5
+    // Cập nhật mảng tìm kiếm
     filteredProducts = [...allProducts];
-    if (typeof renderProducts === "function") renderProducts(currentPage);
     
-    // Nếu đang ở trang Admin thì vẽ lại bảng Admin
+    // VẼ LẠI GIAO DIỆN KHÁCH HÀNG (Quan trọng để khách thấy giày mới)
+    renderProducts(1); 
+    
+    // VẼ LẠI BẢNG ADMIN (Nếu admin đang mở trang quản lý)
     const adminArea = document.getElementById('adminProductArea');
     if (adminArea && adminArea.style.display === 'block') {
-        if (typeof renderAdminProducts === "function") renderAdminProducts();
+        renderAdminProducts();
     }
 });
 
@@ -405,7 +404,6 @@ function sendOrder() {
         total_price: total.toLocaleString() + "đ"
     };
 
-    let allOrders = JSON.parse(localStorage.getItem('dls_orders') || "[]");
     const newOrder = {
         userEmail: session.email,
         date: new Date().toLocaleString('vi-VN'),
