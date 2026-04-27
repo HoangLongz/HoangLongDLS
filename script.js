@@ -53,7 +53,7 @@ const initialProducts = [
 ];
 
 let allProducts = []; 
-let allOrders = []; 
+let allOrders = [];
 
 // LẮNG NGHE DỮ LIỆU SẢN PHẨM (Dành cho cả Khách và Admin)
 db.collection("dls_data").doc("products").onSnapshot((doc) => {
@@ -92,6 +92,22 @@ db.collection("dls_data").doc("orders").onSnapshot((doc) => {
     }
 });
 
+let allUsers = []; 
+
+// --- LẮNG NGHE DỮ LIỆU KHÁCH HÀNG (REAL-TIME) ---
+db.collection("dls_data").doc("users").onSnapshot((doc) => {
+    if (doc.exists) {
+        allUsers = doc.data().userList || [];
+    } else {
+        allUsers = [];
+        db.collection("dls_data").doc("users").set({ userList: allUsers });
+    }
+
+    // Tự động cập nhật bảng Admin nếu đang mở tab Khách hàng
+    if (document.getElementById('adminUserArea') && document.getElementById('adminUserArea').style.display === 'block') {
+        if (typeof renderAdminUsers === "function") renderAdminUsers();
+    }
+});
 
 let cart = [];
 let tempItem = null;
@@ -182,12 +198,12 @@ function updateAccount() {
         return;
     }
 
-    let users = JSON.parse(localStorage.getItem('dls_users') || "[]");
-    let userIndex = users.findIndex(u => u.email === session.email);
-    
+    // Tìm và lưu mật khẩu mới lên Firebase
+    let userIndex = allUsers.findIndex(u => u.email === session.email);
     if (userIndex !== -1) {
-        users[userIndex].pass = newPassInput;
-        localStorage.setItem('dls_users', JSON.stringify(users));
+        allUsers[userIndex].pass = newPassInput;
+        db.collection("dls_data").doc("users").set({ userList: allUsers });
+        
         session.pass = newPassInput;
         localStorage.setItem('dls_session', JSON.stringify(session));
         alert("Cập nhật mật khẩu thành công!");
@@ -458,9 +474,8 @@ function registerAction() {
         return;
     }
 
-    let users = JSON.parse(localStorage.getItem('dls_users') || "[]");
-    if(users.find(u => u.name === user)) return alert("Tên đăng nhập đã tồn tại!");
-    if(users.find(u => u.email === email)) return alert("Email này đã được sử dụng!");
+    if(allUsers.find(u => u.name === user)) return alert("Tên đăng nhập đã tồn tại!");
+    if(allUsers.find(u => u.email === email)) return alert("Email này đã được sử dụng!");
 
     systemOTP = Math.floor(100000 + Math.random() * 900000).toString();
     pendingUser = { name: user, email: email, pass: pass };
@@ -487,17 +502,15 @@ function loginAction() {
     const user = document.getElementById('loginUser').value.trim();
     const pass = document.getElementById('loginPass').value;
 
-    let users = JSON.parse(localStorage.getItem('dls_users') || "[]");
-    const found = users.find(u => (u.name === user || u.email === user) && u.pass === pass);
+    // Quét từ Firebase thay vì bộ nhớ ảo
+    const found = allUsers.find(u => (u.name === user || u.email === user) && u.pass === pass);
 
     if(found) {
         localStorage.setItem('dls_session', JSON.stringify(found));
         checkLoginStatus();
-        // --- THÊM ĐÚNG 1 DÒNG NÀY ĐỂ HIỆN NÚT ADMIN KHÔNG CẦN F5 ---
         checkAdminAccess();
         closeModal('authModal');
         alert("Chào mừng " + found.name + " đã quay trở lại!");
-        // THÊM DÒNG NÀY: Tự động tải lại trang để hiện nút Admin ngay lập tức mà không cần ấn F5
         window.location.reload();
     } else {
         alert("Tên đăng nhập hoặc mật khẩu không chính xác!");
@@ -705,9 +718,11 @@ function handleForgotPassword() {
 function confirmOTPAction() {
     const input = document.getElementById('otpUserInput').value.trim();
     if(input === systemOTP) {
-        let users = JSON.parse(localStorage.getItem('dls_users') || "[]");
-        users.push(pendingUser);
-        localStorage.setItem('dls_users', JSON.stringify(users));
+        // Đẩy thông tin khách hàng mới lên Firebase
+        allUsers.push(pendingUser);
+        db.collection("dls_data").doc("users").set({ userList: allUsers })
+            .catch(error => console.error("Lỗi khi lưu khách hàng:", error));
+            
         localStorage.setItem('dls_session', JSON.stringify(pendingUser));
         
         alert("Xác thực thành công! Chào mừng bạn đến với Hoàng Long DLS.");
@@ -895,12 +910,10 @@ function confirmOrder(index) {
 
 // 5. QUẢN LÝ KHÁCH HÀNG
 function renderAdminUsers() {
-    const users = JSON.parse(localStorage.getItem('dls_users') || "[]");
     const body = document.getElementById('adminUserTableBody');
     
-    body.innerHTML = users.map(u => {
-        // Logic xác định vai trò: 
-        // Nếu email là admin@gmail.com thì ghi là Admin, ngược lại là Khách hàng
+    // Đọc trực tiếp từ mảng đã được Firebase đồng bộ
+    body.innerHTML = allUsers.map(u => {
         const roleText = u.email === 'longdragonn005@gmail.com' 
             ? '<span style="color: var(--pink-main); font-weight: bold;">Admin</span>' 
             : 'Khách hàng';
