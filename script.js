@@ -23,32 +23,32 @@ const db = firebase.firestore();
 
 // MẢNG DỮ LIỆU GỐC (Dùng để đẩy lên Firebase lần đầu tiên nếu trên đó trống)
 const initialProducts = [
-    { name: "Nike Mercurial Vapor 16 Elite Xanh Coban", price: 790000, img: "xanhcobanelite.jpg" },
-    { name: "Nike Mercurial Vapor 16 Academy Cam Vạch Xanh Biển", price: 530000, img: "camvachxanhaca.jpg" },
-    { name: "Nike Tiempo 10 Pro Bạc Vạch Đen", price: 680000, img: "tiempo10bac.jpg" },
-    { name: "Nike Phantom GX 2 Elite Trắng Vạch Xanh Hồng", price: 750000, img: "phantomgx2.jpg" },
-    { name: "Adidas F50 Elite Lamine Yamal Hồng Nhạt", price: 700000, img: "f50yamal.jpg" },
-    { name: "Vapor 16 Elite VN Trắng Vạch Dior", price: 390000, img: "vndior.jpg" },
-    { name: "Adidas X 19.1 Hồng Neon", price: 560000, img: "x19.1.jpg" },
-    { name: "Mizuno Neo 4 Bạc", price: 450000, img: "mizunoneo4.jpg" },
-    { name: "Nike Mercurial Vapor 16 Academy V2 ViniJR Hồng", price: 430000, img: "viniacav2.jpg" },
-    { name: "Winbro F50 Pro Cam Xanh", price: 290000, img: "winbrof50cam.jpg" },
-    { name: "Vapor 16 Elite VN Đỏ Vạch Trắng Đen", price: 390000, img: "vndovp.jpg" },
-    { name: "Nike Mercurial Vapor 16 Elite Dior", price: 790000, img: "vp16dior.jpg" },
-    { name: "Nike Mercurial Vapor 16 Academy V2 Tím khoai môn", price: 430000, img: "acatimv2.jpg" },
-    { name: "Nike Mercurial Vic 6 Đỏ Vạch Đen", price: 430000, img: "vic6do.jpg" },
-    { name: "Nike Phantom 6 Pro Đỏ Xám", price: 660000, img: "phantom6do.jpg" },
-    { name: "Adidas F50 Elite BAPE Xanh Hồng", price: 850000, img: "bape.jpg" },
-    { name: "Adidas F50 Elite Trắng Vạch Đỏ Xanh", price: 720000, img: "f50trang.jpg" },
-    { name: "Adidas F50 Elite Laceless Trắng Đỏ", price: 680000, img: "f50leaguetrangdo.jpg" },
-    { name: "Mizuno Neo 4 Pro Đỏ Vạch Hồng", price: 740000, img: "mizunoneo4dovachhong.jpg" },
-    { name: "Nike Mercurial Vapor 14 Pro Euro Xanh Ngọc", price: 650000, img: "vapor14proxanheuro.jpg" },
-    { name: "Winbro Mercurial Vapor 16 Pro Xanh Lá", price: 290000, img: "winbrovp16xanh.jpg" },
-    { name: "Vapor 16 Elite VN Xanh Ngọc Đế Xanh Ngọc", price: 280000, img: "vp16vnxanhngoc.jpg" },
-    { name: "Nike Mercurial Vapor 15 Academy Trắng", price: 430000, img: "aca15trang.jpg" },
-    { name: "Adidas Predator Edge.3", price: 590000, img: "predator.jpg" },
-    { name: "Mizuno Morelia Neo 3", price: 420000, img: "mizuno3.jpg" },
-    { name: "Nike Mercurial Vapor 16 Elite Gray", price: 790000, img: "gray.jpg" }
+    { name: "Nike Mercurial Vapor 16 Elite Xanh Coban", price: 790000, img: "pic/xanhcobanelite.jpg" },
+    { name: "Nike Mercurial Vapor 16 Academy Cam Vạch Xanh Biển", price: 530000, img: "pic/camvachxanhaca.jpg" },
+    { name: "Nike Tiempo 10 Pro Bạc Vạch Đen", price: 680000, img: "pic/tiempo10bac.jpg" },
+    { name: "Nike Phantom GX 2 Elite Trắng Vạch Xanh Hồng", price: 750000, img: "pic/phantomgx2.jpg" },
+    { name: "Adidas F50 Elite Lamine Yamal Hồng Nhạt", price: 700000, img: "pic/f50yamal.jpg" },
+    { name: "Vapor 16 Elite VN Trắng Vạch Dior", price: 390000, img: "pic/vndior.jpg" },
+    { name: "Adidas X 19.1 Hồng Neon", price: 560000, img: "pic/x19.1.jpg" },
+    { name: "Mizuno Neo 4 Bạc", price: 450000, img: "pic/mizunoneo4.jpg" },
+    { name: "Nike Mercurial Vapor 16 Academy V2 ViniJR Hồng", price: 430000, img: "pic/viniacav2.jpg" },
+    { name: "Winbro F50 Pro Cam Xanh", price: 290000, img: "pic/winbrof50cam.jpg" },
+    { name: "Vapor 16 Elite VN Đỏ Vạch Trắng Đen", price: 390000, img: "pic/vndovp.jpg" },
+    { name: "Nike Mercurial Vapor 16 Elite Dior", price: 790000, img: "pic/vp16dior.jpg" },
+    { name: "Nike Mercurial Vapor 16 Academy V2 Tím khoai môn", price: 430000, img: "pic/acatimv2.jpg" },
+    { name: "Nike Mercurial Vic 6 Đỏ Vạch Đen", price: 430000, img: "pic/vic6do.jpg" },
+    { name: "Nike Phantom 6 Pro Đỏ Xám", price: 660000, img: "pic/phantom6do.jpg" },
+    { name: "Adidas F50 Elite BAPE Xanh Hồng", price: 850000, img: "pic/bape.jpg" },
+    { name: "Adidas F50 Elite Trắng Vạch Đỏ Xanh", price: 720000, img: "pic/f50trang.jpg" },
+    { name: "Adidas F50 Elite Laceless Trắng Đỏ", price: 680000, img: "pic/f50leaguetrangdo.jpg" },
+    { name: "Mizuno Neo 4 Pro Đỏ Vạch Hồng", price: 740000, img: "pic/mizunoneo4dovachhong.jpg" },
+    { name: "Nike Mercurial Vapor 14 Pro Euro Xanh Ngọc", price: 650000, img: "pic/vapor14proxanheuro.jpg" },
+    { name: "Winbro Mercurial Vapor 16 Pro Xanh Lá", price: 290000, img: "pic/winbrovp16xanh.jpg" },
+    { name: "Vapor 16 Elite VN Xanh Ngọc Đế Xanh Ngọc", price: 280000, img: "pic/vp16vnxanhngoc.jpg" },
+    { name: "Nike Mercurial Vapor 15 Academy Trắng", price: 430000, img: "pic/aca15trang.jpg" },
+    { name: "Adidas Predator Edge.3", price: 590000, img: "pic/predator.jpg" },
+    { name: "Mizuno Morelia Neo 3", price: 420000, img: "pic/mizuno3.jpg" },
+    { name: "Nike Mercurial Vapor 16 Elite Gray", price: 790000, img: "pic/gray.jpg" }
     // ... Bạn hãy copy nốt các đôi còn lại trong file cũ của bạn dán vào đây nhé ...
 ];
 
@@ -808,7 +808,7 @@ function saveProduct() {
     if(!name || !price || !img) return alert("Vui lòng điền đủ!");
 
     if(index === -1) {
-        allProducts.push({name, price, img});
+        allProducts.unshift({name, price, img});
     } else {
         allProducts[index] = {name, price, img};
     }
